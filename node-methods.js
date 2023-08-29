@@ -52,7 +52,7 @@ const transformToAbsolute = (filePath) => path.resolve(filePath) // función sin
 //console.log(readFileContent) // yes yes yes
 
 //-----Leer el contenido del archivo-----
-const route = './README.md';
+
 const filePath = './text.text'; // yes yes yes 
 const readFileContent = (filePath) => {
   return new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ const readFileContent = (filePath) => {
 }
 
 //console.log(readFileContent(route)) // Promise { <pending> } // funcion asincrona que se resolverá con el resultado de la operación (.then) y error con (.catch)
-
+const route = './BIKECOMMUNITY.md';
 readFileContent(route)
   .then((data) => {
     console.log(data); // se imprime el contenido del archivo
@@ -78,8 +78,8 @@ readFileContent(route)
 
   
 //---Leer los archivos y extraer los links---//  
-const content = './README.md'
-const getLinks = (content) => {
+const arrayMds = route
+const getLinks = (content, arrayMds) => {
   
 
     const regexMd = /^\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#]+)\)$/ //Coincide con enlaces completos y rutas relativas ----URL relativa (comenzando con /)como una URL absoluta (comenzando con http:// o https://://)----*/
@@ -96,7 +96,7 @@ const getLinks = (content) => {
     }
   }
 
-console.log(getLinks(content))
+console.log(getLinks)
 
 
 
