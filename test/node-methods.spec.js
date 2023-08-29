@@ -1,11 +1,13 @@
 const {
     pathExistsSync,
     checkAbsolutePath,
+    extensionOfPath,
+    readFileContent,
     transformToAbsolute,
-    extensionOfPath
-} = require('../src/api.js');
+    httpPeticion
+} = require('../src/node-methods.js');
 
-const validPath = 'src\\api.js'
+const validPath = 'src\\node-methods.js'
 const invalidPath = '\\src\\api.js'
 const absolutPathMarkdown = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md'
 const relativePathMarkdown = 'README.md'
@@ -52,6 +54,12 @@ describe('extensionOfPath', () => {
     })
     it('Debe devolver una cadena vacia si es una ruta valida pero sin extensión de archivo', () => {
         expect(extensionOfPath('./eslintrc')).toBe('')
+    })
+})
+
+describe('readFileContent', () => {
+    it('Debe leer el contendo de un archivo', () => {
+        expect().toBe()
     })
 })
 
