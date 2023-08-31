@@ -1,44 +1,41 @@
 const {
-    pathExistsSync,
-    checkAbsolutePath,
+    pathExists,
     extensionOfPath,
-    readFileContent,
-    transformToAbsolute,
-    httpPeticion
-} = require('../src/node-methods.js');
+    transformToAbsolute
+} = require('../node-methods.js');
 
-const validPath = 'src\\node-methods.js'
-const invalidPath = '\\src\\api.js'
+const validPath = './node-methods.js'
+const invalidPath = '\\api.js'
 const absolutPathMarkdown = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md'
 const relativePathMarkdown = 'README.md'
 
 describe('pathExistsSync', () => {
     it('Should be a function', () => {
-        expect(typeof pathExistsSync).toBe('function')
+        expect(typeof pathExists()).toBe('boolean')
     })
     it('Should return "true" if the path is valid.', () => {
-        expect(pathExistsSync(validPath)).toBe(true)
+        expect(pathExists(validPath)).toBe(true)
     })
 
     it('Should return "true" if the path is valid.', () => {
-        expect(pathExistsSync(validPath)).toBeTruthy()
+        expect(pathExists(validPath)).toBeTruthy()
     })
 
     it('Validar que la ruta no existe/false', () => {
-        expect(pathExistsSync(invalidPath)).toBe(false)
+        expect(pathExists(invalidPath)).toBe(false)
     })
 
     it('Should return "false" if there is no path.', () => {
-        expect(pathExistsSync(invalidPath)).toBeFalsy()
+        expect(pathExists(invalidPath)).toBeFalsy()
     })
 });
 
-describe('checkAbsolutePath', () => {
-    it('Should be a function', () => {
-        expect(typeof checkAbsolutePath).toBe('function')
+describe('extensionOfPath', () => {
+    it('Debe mostrar true, si la extension del archivo es .md', () => {
+        expect(extensionOfPath(relativePathMarkdown)).toBe(true)
     })
-    it('Debe retornar "true" si es una ruta absoluta.', () => {
-        expect(checkAbsolutePath(absolutPathMarkdown)).toBeTruthy()
+    it('Debe devolver falso si no es una extension Markdown', () => {
+        expect(extensionOfPath(invalidPath)).toBe(false)
     })
 })
 
@@ -48,21 +45,20 @@ describe('transformToAbsolute', () => {
     })
 })
 
-describe('extensionOfPath', () => {
-    it('Debe mostrar la extencion de los archivos.', () => {
-        expect(extensionOfPath(relativePathMarkdown)).toBe('.md')
-    })
-    it('Debe devolver una cadena vacia si es una ruta valida pero sin extensión de archivo', () => {
-        expect(extensionOfPath('./eslintrc')).toBe('')
-    })
-})
+// describe('readFileContent', () => {
+//     it('Debe leer el contendo de un archivo', () => {
+//         expect().toBe()
+//     })
+// })
 
-describe('readFileContent', () => {
-    it('Debe leer el contendo de un archivo', () => {
-        expect().toBe()
-    })
-})
-
+// describe('Tests for async functions', () => {
+//     test('httpPeticion should work correctly', () => {
+//       return httpPeticion('https://github.com/SamCaro')
+//         .then(result => {
+//           expect(result.ok).toBe('OK');
+//         });
+//     });
+// })
 
 //toBeDefined(): Comprueba si el valor está definido (no es undefined).
 //toContain(): Comprueba si un valor (como un elemento de un array) está contenido en otro valor (como un array).

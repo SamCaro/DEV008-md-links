@@ -1,172 +1,148 @@
 const fs = require('fs'); //manipulacion de archivos en node
 const path = require('path'); // === const path = requiere('node:path');
 const fetch = require('node-fetch'); // === const { default: fetch } = require('node-fetch');
-const { get } = require('https');
 
+// //console.log(module)
 
-
-//console.log(module)
-
-//-----Validar si un archivo o directorio existe-----
-const pathExistsSync = (filePath) => fs.existsSync(filePath) // función  sincróna
+//-----Validar si un archivo o directorio existe-----//
+const pathExists = (filePath) => fs.existsSync(filePath) // función  sincróna
 //console.log(pathExistsSync('./noexiste.js')) //false
-//console.log(pathExistsSync('./md-link.js')) //true
-//>>>>>>>> function pathExistsSync(path) {
-//     return fs.existsSync(path);
-// }
-
-
+// //console.log(pathExistsSync('./md-link.js')) //true
+// //>>>>>>>> function pathExistsSync(path) {
+// //     return fs.existsSync(path);
+// //} 
 
 
 //-----Obtener la extensión del archivo Markdown-----
 const extensionOfPath = (filePath) => {
-  const fileExt = path.extname(filePath); 
+  const fileExt = path.extname(filePath);
   return fileExt === '.md' // boleano
 }
-// console.log(extensionOfPath('C:\Users\USUARIO\DEV008\DEV008-md-links\README.md')) // true
-// console.log(extensionOfPath('\README.md'))  // true
-// console.log(extensionOfPath('./text.text')) // false
-
-//>>>>>>>>>>Verificar si es una ruta absoluta
-//console.log(__dirname) // C:\Users\USUARIO\DEV008\DEV008-md-links\src // variable que nos indica el nombre del directorio del módulo que se está ejecutando.
-//console.log(__filename) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\node-methods.js
-const checkAbsolutePath = (filePath) => path.isAbsolute(filePath)
-//console.log(checkAbsolutePath('./api.js'))
-
-//>>>>>>>>>>Obtener una ruta Absoluta de un archivo
-const absolutePath = (filePath) => path.join(__dirname, filePath) //M'etodo join une el directorio actual con la ruta que tengo en el sistema
-//console.log(absolutePath('./text.text')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\text.text // ruta absoluta
-//console.log(absolutePath('api.js')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\api.js
+// // console.log(extensionOfPath('C:\Users\USUARIO\DEV008\DEV008-md-links\README.md')) // true
+// // console.log(extensionOfPath('\README.md'))  // true
+// // console.log(extensionOfPath('./text.text')) // false
 
 
 //-----Convierte una ruta ya sea relativa o absoluta a una ruta absoluta // Genera siempre rutas absolutas-----
 const transformToAbsolute = (filePath) => path.resolve(filePath) // función sincróna
-// console.log(transformToAbsolute('api.js')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\api.js
-// console.log(transformToAbsolute('/Users')) //C:\Users
-// console.log(transformToAbsolute('../../DEV008')) //C:\Users\USUARIO\DEV008\DEV008
+// // console.log(transformToAbsolute('api.js')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\api.js
+// // console.log(transformToAbsolute('/Users')) //C:\Users
+// // console.log(transformToAbsolute('../../DEV008')) //C:\Users\USUARIO\DEV008\DEV008
+
+
+// //>>>>>>>>>>Verificar si es una ruta absoluta
+// //console.log(__dirname) // C:\Users\USUARIO\DEV008\DEV008-md-links\src // variable que nos indica el nombre del directorio del módulo que se está ejecutando.
+// //console.log(__filename) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\node-methods.js
+// const checkAbsolutePath = (filePath) => path.isAbsolute(filePath)
+// //console.log(checkAbsolutePath('./api.js'))
+
+// //>>>>>>>>>>Obtener una ruta Absoluta de un archivo
+//const absolutePath = (filePath) => path.join(__dirname, filePath) //M'etodo join une el directorio actual con la ruta que tengo en el sistema
+// //console.log(absolutePath('./text.text')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\text.text // ruta absoluta
+// //console.log(absolutePath('api.js')) //C:\Users\USUARIO\DEV008\DEV008-md-links\src\api.js
 
 
 
-//>>>>>>>>>>Leer el contenido del archivo
-//const readFileContent =  fs.readFileSync(absolutePath(filePath), "utf8") // función sincróna (primer parametro de la función getAbsolutePath es una ruta relativa)
-//console.log(readFileContent) // yes yes yes
+//---extraer los links---//  
+const getLinks = (content, fileName) => new Promise((resolve) => {
+  const regexMd = /\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg;
+  const regexParentesisURL = /\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg;
+  const regexCorchetesURL = /\[([\w\s\d]+)\]/g;
 
-//-----Leer el contenido del archivo-----
+  const links = content.match(regexMd);
+  let arrayLinks;
+  if (links) {
+    arrayLinks = links.map((extractLink) => {
+      const extracthref = extractLink.match(regexParentesisURL).join().slice(1, -1);
+      const extractText = extractLink.match(regexCorchetesURL).join().slice(1, -1);
 
-const filePath = './text.text'; // yes yes yes 
-const readFileContent = (filePath) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, 'utf-8', (err, data) => {  //callback con dos parametros (err, data)
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data) //datos que se leen del archivo // yes yes yes
-      }
-    })
-  })
-}
+      return {
+        href: extracthref,
+        text: extractText,
+        fileName: fileName,
+      };
+    });
+    resolve(arrayLinks);
+  } else if (links === null) {
+    resolve([]);
+  }
+});
 
-//console.log(readFileContent(route)) // Promise { <pending> } // funcion asincrona que se resolverá con el resultado de la operación (.then) y error con (.catch)
-const route = './BIKECOMMUNITY.md';
-readFileContent(route)
-  .then((data) => {
-    console.log(data); // se imprime el contenido del archivo
-  })
-  .catch((err) => {
-    console.error(err); // Manejas cualquier error que pueda ocurrir
-  });
-
-  
-//---Leer los archivos y extraer los links---//  
-const arrayMds = route
-const getLinks = (content, arrayMds) => {
-  
-
-    const regexMd = /^\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#]+)\)$/ //Coincide con enlaces completos y rutas relativas ----URL relativa (comenzando con /)como una URL absoluta (comenzando con http:// o https://://)----*/
-   // const regexMdParentesis = /\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg //Coincide ccon URLs en formato Markdown que están entre paréntesis.--- Url () ---//
-   // const regexMdCorchetes = /\[([\w\s\d]+)\]/g; // Coincide con enlaces en formato Markdown que están entre corchetes--- Nombre de Url [] ---//
-
-    const links = content.match(regexMd)
-    console.log(links)
-
-    if(links) {
-      return (links)
-    } else {
-     return []
-    }
+//----Leer el contenido de los archivos----//
+fs.readFile('documents-mds/otrosArchivos.md', 'utf8', (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
   }
 
-console.log(getLinks)
+  const arrResult = getLinks(data, 'otrosArchivos.md')
+    .then(arrResult => {
+      console.log(arrResult)
+    })
+    .catch(err => {
+      console.error(err)
+    })
+ });
 
 
-
-
-
-//-----Leer el contenido del archivo-----
-readFileContent('./text.text')
-  .then((data) => {
-    return getLinks(data, './text.text');
-  })
-  .then((links) => {
-    console.log(links);
-  })
-  .catch((err) => {
-    console.error(err); // Manejas cualquier error que pueda ocurrir en la lectura del archivo o en la extracción de links
-  });
-
-//---Petición HTTP usando Fetch
-//Fetch permite hacer solicitudes HTTP asincronas en el navegador
+// //---Petición HTTP usando Fetch
+// //Fetch permite hacer solicitudes HTTP asincronas en el navegador
 
 const href = ('https://github.com/SamCaro')
-//  {
-//   url: 'https://github.com/SamCaro',
-//   text: [Function: text],
-//   file: undefined,
-//   status: 200,
-//   ok: 'OK'
-// }
+// //  {
+// //   url: 'https://github.com/SamCaro',
+// //  text: [ \n\n<!DOCTYPE....50 caracteres],
+// //   status: 200,
+// //   ok: 'OK'
+// // }
 //const href = ('http://example.com/movies.json')
-// {
-//   url: 'http://example.com/movies.json',
-//   text: [Function: text],
-//   file: undefined,
-//   status: 404,
-//   ok: 'FAIL'
-// }
+// // {
+// //   url: 'http://example.com/movies.json',
+// //   text: [ <!doctype'...50 caracteres],
+// //   status: 404,
+// //   ok: 'FAIL'
+// // }
 
 const httpPeticion = (href) => {
   return fetch(href)
     .then((res) => {
-      //console.log(res)
-      //console.log(
-      return ({
-        url: res.url,
-        text: res.text,
-        file: res.file, // undefined,
-        status: res.status,
-        ok: res.ok ? 'OK' : 'FAIL' // Es una forma abreviada y concisa de realizar una declaración if-else.
-      })
-      // )
+      return res.text() // Obtiene el contenido de la respuesta como texto
+        .then((text) => ({
+          url: res.url,
+          text: text.split(' ', 50),
+          fileName: href,
+          status: res.status,
+          ok: res.ok ? 'OK' : 'FAIL'
+        }));
     })
     .catch((err) => {
-      console.log('La URL no es valida', err)
-    })
-  // .catch(()=> ({
-  //  url: res.url,
-  //  status: 404,
-  //  ok: 'FAIL'
-  //  }))
-}
+      console.log('La URL no es válida', err);
+      return {
+        url: href,
+        status: 404,
+        ok: 'FAIL'
+      };
+    });
+};
+
+httpPeticion(href)
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 module.exports = {
-  pathExistsSync,
-  checkAbsolutePath,
+  pathExists,
   extensionOfPath,
-  readFileContent,
   transformToAbsolute,
+  getLinks,
   httpPeticion
 };
 
 
 // $ ls -d *  --> Los nombres de los elementos que tienen "@" al final son enlaces simbólicos,
 //mientras que los que tienen "/" al final son directorios. ($ ls -d */)
+
+
