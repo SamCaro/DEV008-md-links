@@ -45,7 +45,7 @@ const transformToAbsolute = (filePath) => path.resolve(filePath) // función sin
 
 //---extraer los links---//  
 const getLinks = (content, fileName) => new Promise((resolve) => {
-  const regexMd = /\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg;
+  const regexMd = /\[([\w\s\d]+)\]\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg; 
   const regexParentesisURL = /\(((?:\/|https?:\/\/)[\w\d./?=#&_%~,.:-]+)\)/mg;
   const regexCorchetesURL = /\[([\w\s\d]+)\]/g;
 
@@ -53,11 +53,11 @@ const getLinks = (content, fileName) => new Promise((resolve) => {
   let arrayLinks;
   if (links) {
     arrayLinks = links.map((extractLink) => {
-      const extracthref = extractLink.match(regexParentesisURL).join().slice(1, -1);
+      const extractHref = extractLink.match(regexParentesisURL).join().slice(1, -1);
       const extractText = extractLink.match(regexCorchetesURL).join().slice(1, -1);
 
       return {
-        href: extracthref,
+        href: extractHref,
         text: extractText,
         fileName: fileName,
       };
@@ -69,26 +69,53 @@ const getLinks = (content, fileName) => new Promise((resolve) => {
 });
 
 //----Leer el contenido de los archivos----//
-fs.readFile('documents-mds/otrosArchivos.md', 'utf8', (err, data) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
+//{ 
+// href: 'https://github.com/',
+// text: 'GitHub',
+// fileName: 'otrosArchivos.md'
+//},
+// // // // fs.readFile('\README.md', (err, data) => {
+// // // //   if (err) {
+// // // //     console.log(err);
+// // // //     return;
+// // // //   }
+// // // //   const arrResult = getLinks(data, '\README.md')
+// // // //     .then(arrResult => {
+// // // //       console.log(arrResult)
+// // // //     })
+// // // //     .catch(err => {
+// // // //       console.log(err)
+// // // //     })
+// // // // });
 
-  const arrResult = getLinks(data, 'otrosArchivos.md')
-    .then(arrResult => {
-      console.log(arrResult)
-    })
-    .catch(err => {
-      console.error(err)
-    })
- });
+
+//----Leer el contenido de los archivos----//
+// # GitHub [GitHub](https://github.com/)
+const readFileContent = (filePath) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  })
+};
+
+readFileContent('\README.md')
+  .then((data) => {
+    console.log(data)
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 
 
 // //---Petición HTTP usando Fetch
 // //Fetch permite hacer solicitudes HTTP asincronas en el navegador
-
 const href = ('https://github.com/SamCaro')
+//const href = ('http://www.google.com/')
 // //  {
 // //   url: 'https://github.com/SamCaro',
 // //  text: [ \n\n<!DOCTYPE....50 caracteres],
@@ -109,7 +136,7 @@ const httpPeticion = (href) => {
       return res.text() // Obtiene el contenido de la respuesta como texto
         .then((text) => ({
           url: res.url,
-          text: text.split(' ', 50),
+          text: text.split(' ', 10),
           fileName: href,
           status: res.status,
           ok: res.ok ? 'OK' : 'FAIL'
@@ -138,6 +165,7 @@ module.exports = {
   extensionOfPath,
   transformToAbsolute,
   getLinks,
+  readFileContent,
   httpPeticion
 };
 
