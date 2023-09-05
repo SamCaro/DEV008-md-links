@@ -53,8 +53,8 @@ const getLinks = (content, fileName) => new Promise((resolve) => {
   let arrayLinks;
   if (links) {
     arrayLinks = links.map((extractLink) => {
-      const extractHref = extractLink.match(regexParentesisURL).join().slice(1, -1);
-      const extractText = extractLink.match(regexCorchetesURL).join().slice(1, -1);
+      const extractHref = extractLink.match(regexParentesisURL).join().slice(1, -1); //join() = convierte en una cadena de texto, une todo
+      const extractText = extractLink.match(regexCorchetesURL).join().slice(1, -1); //match() = devuelve un array con todas las coincidencias o null
 
       return {
         href: extractHref,
@@ -103,18 +103,19 @@ const readFileContent = (filePath) => {
   })
 };
 
-readFileContent('\README.md')
-  .then((data) => {
-    console.log(data)
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// // // // readFileContent('\README.md')
+// // // //   .then((data) => {
+// // // //     console.log(data)
+// // // //   })
+// // // //   .catch((error) => {
+// // // //     console.error(error);
+// // // //   });
 
 
-// //---Petición HTTP usando Fetch
+//----Petición HTTP usando Fetch ----//
+// Libreria node-fetch = Permite que fetch funcione en el entorno Node.js
 // //Fetch permite hacer solicitudes HTTP asincronas en el navegador
-const href = ('https://github.com/SamCaro')
+//const href = ('https://github.com/SamCaro')
 //const href = ('http://www.google.com/')
 // //  {
 // //   url: 'https://github.com/SamCaro',
@@ -130,35 +131,66 @@ const href = ('https://github.com/SamCaro')
 // //   ok: 'FAIL'
 // // }
 
-const httpPeticion = (href) => {
-  return fetch(href)
-    .then((res) => {
-      return res.text() // Obtiene el contenido de la respuesta como texto
-        .then((text) => ({
-          url: res.url,
-          text: text.split(' ', 10),
-          fileName: href,
-          status: res.status,
-          ok: res.ok ? 'OK' : 'FAIL'
-        }));
-    })
-    .catch((err) => {
-      console.log('La URL no es válida', err);
-      return {
-        url: href,
-        status: 404,
-        ok: 'FAIL'
-      };
-    });
-};
 
-httpPeticion(href)
-  .then((result) => {
-    console.log(result);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+const httpPeticion = (href) => {
+  //const isURL = href.startsWith('http://') || href.startsWith('https://');
+  const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i; // Expresión regular para URL
+  if (urlRegex.test(href)) { // test() = verificar si una expresión regular coincide con una cadena de texto. Retorna boleano
+    return fetch(href)
+      .then((res) => {
+        return res.text()
+          .then((text) => ({
+            url: res.url,
+            text: text.split(' ', 10),
+            fileName: href,
+            status: res.status,
+            ok: res.ok ? 'OK' : 'FAIL'
+          }))
+          .catch((err) => {
+            console.log('Error al obtener el contenido de la respuesta', err);
+            return {
+              url: href,
+              status: 404,
+              ok: 'FAIL'
+            };
+          });
+      })
+      .catch((err) => {
+        console.log('Error al hacer la solicitud HTTP', err);
+        return {
+          url: href,
+          status: 404,
+          ok: 'FAIL'
+        };
+      });
+  } else {
+    return readFileContent(href)
+      .then((data) => ({
+        url: 'file://' + href,
+        text: data.split(' ', 10),
+        fileName: href,
+        status: 200,
+        ok: 'OK'
+      }))
+      .catch((err) => {
+        console.log('Error al leer el archivo local', err);
+        return {
+          url: href,
+          status: 404,
+          ok: 'FAIL'
+        };
+      });
+  }
+};
+// // // // // // httpPeticion(href)
+// // // // // //   .then((result) => {
+// // // // // //     console.log(result);
+// // // // // //   })
+// // // // // //   .catch((error) => {
+// // // // // //     console.error(error);
+// // // // // //   });
+
+
 
 module.exports = {
   pathExists,

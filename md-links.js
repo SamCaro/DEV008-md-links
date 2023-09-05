@@ -21,8 +21,8 @@ const mdLinks = (path, options = { validate: false }) => {
       const absolutePath = transformToAbsolute(path)
       //Se lee el contenido del archivo
       readFileContent(absolutePath) // Devuelve una promesa
-       .then((data) => {
-        //if(data) {
+        .then((data) => {
+          //if(data) {
           //Se resuelve la promesa extrayendo u obteniendo los enlaces 
           const arrayLinks = getLinks(absolutePath, data)
           //Si el array de enlaces es vacio se rechaza la promesa
@@ -30,9 +30,9 @@ const mdLinks = (path, options = { validate: false }) => {
             reject('La ruta no tiene links')
           } else {
             //Si hay enlaces en el array la validacion es verdadera
-            if (options.validate === true) { // = (options.validate)
-              // Se resuelve la promesa mostrando el array de enlaces
-              resolve(arrayLinks)
+             if (options.validate === true) { // = (options.validate)
+            // Se resuelve la promesa mostrando el array de enlaces
+            resolve(arrayLinks)
             } else {
               //Si la validacion es falsa, se hace una solicitud HTTP para verificar el estado de los enlaces 
               const arrayLinkstatus = httpPeticion(arrayLinks)
@@ -41,14 +41,14 @@ const mdLinks = (path, options = { validate: false }) => {
             }
           }
         })
-       // }
+        // }
         //Si algun proceso sale mal se rechaza la promesa y muestra el error 
         .catch((err) => {
-         // else {
+          // else {
           console.log(err, 'La ruta no existe o no es una ruta valida')
           reject(err);
         })
-       // };
+      // };
     }
   });
 };
