@@ -31,36 +31,43 @@ md-links <path-to-file> [options] Donde options puede ser 'validate' para verifi
 
 $ md-links example.md
 
+```sh
 href: http://algo.com/2/3/
 text: Link a algo
 file: ./some/example.md: - 3
-
+```
+```sh
 href: https://otra-cosa.net/algun-doc.html
 text: Link a otra cosa
 file: ./some/example.md: - 12
-
+```
+```sh
 href: http://google.com/
 text: Google
 file: ./some/example.md: - 15
 Usando validate:
-
+```
 $ md-links example.md --validate
 
+```sh
 href: http://algo.com/2/3/
 text: Link a algo
 file: ./some/example.md: - 3
 code: 200 - OK
-
+```
+```sh
 href: https://otra-cosa.net/algun-doc.html
 text: Link a otra cosa
 file: ./some/example.md: - 12
 code: 404 - FAIL
-
+```
+```sh
 href: http://google.com/
 text: Google
 file: ./some/example.md: - 15
 code: 203 - OK
 Usando --stats
+```
 
 Total: 9, Unique: 3
 Usando --validate y --stats (pueden usarse tanto juntos como separados)
