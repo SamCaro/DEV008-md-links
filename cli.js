@@ -1,73 +1,40 @@
 // script de línea de comandos (CLI) en JavaScript que utiliza Node.js.
-const process = require('process');
+
 const { mdLinks } = require('./mdlinks.js');
 const { httpPeticion } = require('./node-methods.js');
 const { statsLinks } = require('./stats.js');
 
-const arguments = process.argv.slice(2);
-const path = arguments[0];
-console.log(typeof path)
-const options = arguments[1];
-console.log(typeof options)
-const stats = arguments.includes('--stats');
-const validate = arguments.includes('--validate');
-
-let contadorIteraciones = 0;
+const args = process.argv.slice(2);
+const path = args[0];
+const stats = args.includes('--stats');
+const validate = args.includes('--validate');
 
 const cli = () => {
-  if (!path) {
-    console.log('ERROR: Debes ingresar una ruta.');
-    return;
+  if (args.length === 0 || args.includes('--help') || !path) {
+    console.log('Uso: md-links <path> [opciones]');
+    console.log('Opciones:');
+    console.log('--validate  Comprueba el estado de los enlaces.');
+    console.log('--stats     Muestra estadísticas de los enlaces.');
+    console.log('Ejemplo: md-links README.md --validate --stats');
+    process.exit(0);
   }
 
-  if (path && !validate && !stats) {
-    mdLinks(path, { validate: false })
-      .then((resp) => {
-        resp.forEach((respLink) => {
-          console.log('Resultado mdlinks link', respLink);
-        })
-        // .catch((err) => {
-        //   console.log('ERROR:', err);
-        // });
-      });
-  } else if ((validate && stats) || (stats && validate)) {
-    mdLinks(path, { validate: true })
-      .then((content) => httpPeticion(content))
-      .then((resp) => {
-        console.log(statsLinks(resp, true));
-      })
-      .catch((err) => {
-        console.log('ERROR:', err);
-      });
-  } else if (validate && !stats) {
-    mdLinks(path, { validate: true })
-      .then((array) => httpPeticion(array))
-      .catch((err) => {
-        console.log('ERROR:', err);
-      });
-  } else if (stats && !validate) {
-    mdLinks(path, { validate: false })
-      .then((resp) => {
-        console.log(statsLinks(resp, true));
-      })
-      .catch((err) => {
-        console.log('ERROR:', err);
-      });
-  }
-
-  contadorIteraciones++; //Incrementa el contador de iteraciones
-  //Condicion de parada: verifica si se han procesado todos los archivos o si se ha alcanzado 10 iteraciones 
-  if(contadorIteraciones < 1) {
-    cli()
-  }
+  mdLinks(path, { validate, stats })
+    .then((links) => {
+      if (validate) {
+        console.log(links)
+      }
+      if (stats) {
+        console.log(statsLinks(links, true))
+      }
+      if (!validate && !stats) {
+        console.log('Ingresa la opcion que desees validar')
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 cli();
 
-// mdLinks('read.md', options)
-//   .then((data) => {
-//     console.log(data)
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });

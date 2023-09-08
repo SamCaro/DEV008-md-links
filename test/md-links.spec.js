@@ -3,7 +3,7 @@ const { mdLinks } = require('../mdlinks');
 const pathError = '/usuario/DEV008/DEV008-md-links/noexiste'
 const path = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas'
 const pathVacio = 'test\test-pruebas\prueba-path-vacio.md'
-const pathOK = 'test\test-pruebas\prueba-path-valid.md' // relativa 
+const pathOK = 'C:\Users\USUARIO\DEV008\DEV008-md-links\read.md'
 
 const arrLinksTestFAIL = [
     {
@@ -30,21 +30,16 @@ describe('mdLinks', () => {
     })
 
     it('Debe retornar una promesa', () => {
-        return mdLinks((path) instanceof Promise)
-            .then(result => {
-                expect(result).toBe(true)
-            })
-            .catch((err) => {
-                return err
-            })
-    })
-
+        expect(mdLinks('C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md') instanceof Promise).toBeTruthy()
+    });
+   
+    
     it('Debe rechazar o fallar cuando el path es un enlace vacio', () => {
-        return expect(mdLinks(pathVacio)).rejects.toMatch('La ruta no existe o no es una ruta valida')
+        return expect(mdLinks(pathVacio)).rejects.toThrow('Archivo Markdown no encontrado.')
     })
 
     it('Debe rechazar o fallar cuando el path no existe ', () => {
-        return expect(mdLinks(pathError)).rejects.toMatch('La ruta no existe o no es una ruta valida')
+        return expect(mdLinks(pathError)).rejects.toThrow('Archivo Markdown no encontrado.')
     })
 
     it('Debe resolver cuando el path existe', () => {
@@ -62,19 +57,19 @@ describe('mdLinks', () => {
             .then(result => {
                 expect(result).toMatch(arrLinksTestFAIL)
             })
-            .catch((err) => { 
+            .catch((err) => {
                 return err;
             })
     })
 
     it('Debe retornar un arreglo vacio en validate: false', () => {
         return mdLinks(pathOK, { validate: false })
-        .then((result) => {
-            expect(result).toEqual([])
-        })
-        .catch(err => {
-            return err
-        })
+            .then((result) => {
+                expect(result).toEqual([])
+            })
+            .catch(err => {
+                return err
+            })
     })
 
     it('Debe retornar un arreglo de objetos OK en validate: true ', () => {
@@ -87,16 +82,16 @@ describe('mdLinks', () => {
             })
     })
 
-  it('Debe retornar un arreglo con estado FAIL para un enlace que no responde (HTTP 404)', () => {
-    return mdLinks(pathError)
-    .then(result => {
-        expect(result.status).toBe(404)
-        expect(result.ok).toBe('FAIL')
+    it('Debe retornar un arreglo con estado FAIL para un enlace que no responde (HTTP 404)', () => {
+        return mdLinks(pathError)
+            .then(result => {
+                expect(result.status).toBe(404)
+                expect(result.ok).toBe('FAIL')
+            })
+            .catch((err) => {
+                return err
+            })
     })
-    .catch((err) => {
-        return err
-    })
-  })
 })
 
 

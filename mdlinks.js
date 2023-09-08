@@ -1,40 +1,37 @@
+const fs = require('fs'); 
 const {
   pathExists,
   extensionOfPath,
   transformToAbsolute,
   httpPeticion,
   getLinks
-} = require('./node-methods'); // desestructuración
+} = require('./node-methods'); 
 
-const fs = require('fs'); 
 
 const mdLinks = (filePath) => {
   const absolutePath = transformToAbsolute(filePath);
 
-  if (!pathExists(absolutePath) || !extensionOfPath(absolutePath)) {
-    return Promise.reject(new Error('Archivo Markdown no encontrado.'));
-  }
+  return new Promise((resolve, reject) => {
+    if (!pathExists(absolutePath) || !extensionOfPath(absolutePath)) {
+      reject(new Error('Archivo Markdown no encontrado.'));
+      return;
+    }
 
-  return fs.promises.readFile(absolutePath, 'utf8')
-    .then((content) => {
-      const links = getLinks(content, absolutePath);
-      if (links.length === 0) {
-        return [];
-      }
-      return httpPeticion(links);
-    });
+    fs.promises.readFile(absolutePath, 'utf8')
+      .then((content) => {
+        const links = getLinks(content, absolutePath);
+        if (links.length === 0) {
+          resolve([]);
+        } else {
+          resolve(httpPeticion(links));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };
 
-
-
-
-mdLinks('otrosArchivos.md')
-  .then((result) => {
-    console.log(result);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
 
 
 module.exports = {

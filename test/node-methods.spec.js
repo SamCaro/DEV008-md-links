@@ -6,10 +6,11 @@ const {
     httpPeticion
 } = require('../node-methods');
 
-const path = '\README.md'
+const path = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md';
 const pathVacio = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas\prueba-path-valid.md'
 const absolutPathMarkdown = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md'
 const relativePathMarkdown = 'README.md'
+const invalidPath = 'ruta_invalida.txt';
 
 describe('pathExistsSync', () => {
     it('Debe ser Boleano', () => {
@@ -24,7 +25,7 @@ describe('pathExistsSync', () => {
     })
 
     it('Validar que la ruta no existe/false', () => {
-        expect(pathExists(pathVacio)).toBe(false)
+        expect(pathExists(invalidPath)).toBe(false)
     })
 
     it('Should return "false" if there is no path.', () => {
@@ -37,7 +38,7 @@ describe('extensionOfPath', () => {
         expect(extensionOfPath(relativePathMarkdown)).toBe(true)
     })
     it('Debe devolver falso si no es una extension Markdown', () => {
-        expect(extensionOfPath('C:\Users\USUARIO\DEV008\DEV008-md-links\md-links.js')).toBe(false)
+        expect(extensionOfPath(invalidPath)).toBe(false)
     })
 })
 
@@ -51,36 +52,42 @@ describe('getLinks', () => {
     it('Debe ser una Funcion', () => {
         expect(typeof getLinks).toBe('function')
     })
+    it('Debe extraer el contenido de enlaces markdown', () => {
+        const text = '[Google](http://www.google.com)';
+        const fileName = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\src\\documents-mds\\otrosArchivos.md';
 
-    it('Debe extraer el contendo de enlaces markdown', () => {
-        const content = '[Google](http://www.google.com)';
-        const fileName = 'C:\Users\USUARIO\DEV008\DEV008-md-links\src\documents-mds\otrosArchivos.md';
+        const links = getLinks(text, fileName);
 
-        return getLinks(content, fileName)
-            .then(result => {
-                expect(result).toContainEqual( //toContainEqual = contiene un valor específico en un array o iterable. este comparador verifica de forma recursiva la igualdad de todos los campos
-                    {
-                        href: 'http://www.google.com',
-                        text: 'Google',
-                        fileName: 'C:\Users\USUARIO\DEV008\DEV008-md-links\src\documents-mds\otrosArchivos.md'
-                    }
-                );
-            });
+        expect(links).toEqual([
+            {
+                href: 'http://www.google.com',
+                text: 'Google',
+                fileName: "C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\src\\documents-mds\\otrosArchivos.md",
+            },
+        ]);
     });
-})
+
+
+});
+
 
 
 describe('httpPeticion', () => {
     it('Debe retornar una peticion HTTP OK', () => {
-        const links = (['https://www.laboratoria.la/', 'https://app.slack.com/client/T0NNB6T0R/C054M5X8M6D'])
+        const links = [
+            { href: 'https://www.laboratoria.la/', text: 'Laboratoria', fileName: 'example.md' },
+            { href: 'https://app.slack.com/client/T0NNB6T0R/C054M5X8M6D', text: 'Slack', fileName: 'example.md' },
+        ];
 
         return httpPeticion(links)
             .then(results => {
                 results.forEach(result => {
-                    expect(result.ok).toBe('OK')
-                })
-            })
-    })
+                    expect(result.ok).toBe('OK');
+                });
+            });
+    });
+
+
 
     it('Debe retornar un peticion HTTP FAIL', () => {
         const links2 = ['https://samcaro.github.io/', 'htttttp://google.com']
