@@ -1,12 +1,10 @@
-const { mdLinks } = require('../md-links');
+const { mdLinks } = require('../mdlinks');
 
 const pathError = '/usuario/DEV008/DEV008-md-links/noexiste'
 const path = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas'
 const pathVacio = 'test\test-pruebas\prueba-path-vacio.md'
-//const pathOK = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas\prueba-path-valid.md' // absoluta
 const pathOK = 'test\test-pruebas\prueba-path-valid.md' // relativa 
-//const pathOK = 'test\test-pruebas\text.text'
-//const pathOK = 'test\test-pruebas\noexiste'
+
 const arrLinksTestFAIL = [
     {
         href: 'https://www.laboratoria./',
@@ -102,4 +100,3 @@ describe('mdLinks', () => {
 })
 
 
-// toMatch = comprueba que una cadena coincide con una expresión regular.

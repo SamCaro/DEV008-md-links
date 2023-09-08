@@ -1,56 +1,73 @@
-// const { mdLinks } = require('./md-links');
-// const { httpPeticion } = require('./node-methods');
+// script de línea de comandos (CLI) en JavaScript que utiliza Node.js.
+const process = require('process');
+const { mdLinks } = require('./mdlinks.js');
+const { httpPeticion } = require('./node-methods.js');
+const { statsLinks } = require('./stats.js');
 
-// //Ejecucion: node cli.js https://github.com/SamCaro --validate
+const arguments = process.argv.slice(2);
+const path = arguments[0];
+console.log(typeof path)
+const options = arguments[1];
+console.log(typeof options)
+const stats = arguments.includes('--stats');
+const validate = arguments.includes('--validate');
 
-// const options = process.argv.slice(2);
-// console.log(process.argv)
-// console.log('La ruta es:', options[0]); // https://github.com/SamCaro
-// console.log('La opcion es:', options[1]); // --validate
-// const path = options[0];
+let contadorIteraciones = 0;
 
+const cli = () => {
+  if (!path) {
+    console.log('ERROR: Debes ingresar una ruta.');
+    return;
+  }
 
-// mdLinks(path, { validate: true })
-//   .then(content => httpPeticion(content))
-//   .then((result) => {
-//     //----Total Links ----//
-//     const totalHref = array => `Total: ${array.length}`
-//     console.log(totalHref(result))
+  if (path && !validate && !stats) {
+    mdLinks(path, { validate: false })
+      .then((resp) => {
+        resp.forEach((respLink) => {
+          console.log('Resultado mdlinks link', respLink);
+        })
+        // .catch((err) => {
+        //   console.log('ERROR:', err);
+        // });
+      });
+  } else if ((validate && stats) || (stats && validate)) {
+    mdLinks(path, { validate: true })
+      .then((content) => httpPeticion(content))
+      .then((resp) => {
+        console.log(statsLinks(resp, true));
+      })
+      .catch((err) => {
+        console.log('ERROR:', err);
+      });
+  } else if (validate && !stats) {
+    mdLinks(path, { validate: true })
+      .then((array) => httpPeticion(array))
+      .catch((err) => {
+        console.log('ERROR:', err);
+      });
+  } else if (stats && !validate) {
+    mdLinks(path, { validate: false })
+      .then((resp) => {
+        console.log(statsLinks(resp, true));
+      })
+      .catch((err) => {
+        console.log('ERROR:', err);
+      });
+  }
+
+  contadorIteraciones++; //Incrementa el contador de iteraciones
+  //Condicion de parada: verifica si se han procesado todos los archivos o si se ha alcanzado 10 iteraciones 
+  if(contadorIteraciones < 1) {
+    cli()
+  }
+};
+
+cli();
+
+// mdLinks('read.md', options)
+//   .then((data) => {
+//     console.log(data)
 //   })
-//   .catch((err) => {
-//     console.log(err)
-//   })
-
-const { mdLinks } = require('./md-links');
-const { httpPeticion } = require('./node-methods');
-
-const options = process.argv.slice(2);
-console.log('La ruta es:', options[0]);
-console.log('La opción es:', options[1]);
-
-const path = options[0];
-const validateOption = options.includes('--validate');
-
-mdLinks(path, { validate: validateOption })
-  .then((links) => {
-    if (validateOption) {
-      return Promise.all(links.map(httpPeticion));
-    } else {
-      return links;
-    }
-  })
-  .then((result) => {
-    result.forEach((link) => {
-      if (validateOption) {
-        console.log(`${link.fileName} ${link.href} ${link.ok} ${link.status} ${link.text}`);
-      } else {
-        console.log(`${link.fileName} ${link.href} ${link.text}`);
-      }
-    });
-    console.log(`Total: ${result.length}`);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
-//  barras diagonales(/) convención en sistemas Unix (como Git Bash en Windows)
+//   .catch((error) => {
+//     console.error(error);
+//   });

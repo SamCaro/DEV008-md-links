@@ -31,7 +31,11 @@
     "url": "git+https://github.com/SamCaro/DEV008-md-links.git"
   },
   "bugs": {
-    "url": "https://github.com/SamCaro/DEV008-md-links/issues"
+    "url": "https://github.com/SamCaro/DEV008-md-links/issues",
+    "homepage": "https://github.com/SamCaro/DEV008-md-links#readme"
   },
-  "homepage": "https://github.com/SamCaro/DEV008-md-links#readme"
+  "bin": {
+    "mdlinks": "cli.js"
+  }
+  
 }

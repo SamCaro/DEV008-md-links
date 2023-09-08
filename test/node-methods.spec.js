@@ -72,27 +72,34 @@ describe('getLinks', () => {
 
 describe('httpPeticion', () => {
     it('Debe retornar una peticion HTTP OK', () => {
-        const href1 = ('https://www.laboratoria.la/')
+        const links = (['https://www.laboratoria.la/', 'https://app.slack.com/client/T0NNB6T0R/C054M5X8M6D'])
 
-        return httpPeticion(href1)
-            .then(result => {
-                expect(result.ok).toBe('OK')
+        return httpPeticion(links)
+            .then(results => {
+                results.forEach(result => {
+                    expect(result.ok).toBe('OK')
+                })
             })
     })
-    it('Debe retornar un peticion HTTP FAIL', () => {
-        const href2 = ('http://example.com/movies.json')
 
-        return httpPeticion(href2)
-            .then(result => {
-                expect(result.ok).toBe('FAIL')
+    it('Debe retornar un peticion HTTP FAIL', () => {
+        const links2 = ['https://samcaro.github.io/', 'htttttp://google.com']
+
+        return httpPeticion(links2)
+            .then(results => {
+                results.forEach(result => {
+                    expect(result.ok).toBe('FAIL')
+                })
             })
     })
     it('Debe retornar un arreglo con estado FAIL para un enlace que no responde (HTTP 404)', () => {
-        
-        return httpPeticion('http://labo.com/noexist')
-        .then(result => {
-            expect(result.status).toBe(404)
-            expect(result.ok).toBe('FAIL')
-        })
-      })
+
+        return httpPeticion(['hhttp://labo.com/noexist', 'htttttp://google.com'])
+            .then(results => {
+                results.forEach(result => {
+                    expect(result.status).toBe(400)
+                    expect(result.ok).toBe('FAIL')
+                })
+            })
+    })
 })

@@ -1,0 +1,11 @@
+Errores durante la solicitud HTTP al servidor:
+
+1. Error de red: Si el cliente no puede conectarse al servidor debido a problemas de red, como la falta de conexión a Internet, un firewall que bloquea la conexión, o el servidor está temporalmente fuera de línea.
+
+2. Error de DNS: Si la URL proporcionada no puede resolverse a una dirección IP válida debido a un problema en la resolución de DNS.
+
+3. Error en el servidor: Si el servidor devuelve un error HTTP, como un 404 (No encontrado), 500 (Error interno del servidor) u otros códigos de estado de error.
+
+4. Error de tiempo de espera: Si la solicitud al servidor toma demasiado tiempo y se supera el tiempo de espera definido.
+
+5. Errores de CORS (Política de mismo origen): Si la solicitud está sujeta a restricciones de política de mismo origen y el servidor no está configurado para permitir solicitudes desde el dominio del cliente.
