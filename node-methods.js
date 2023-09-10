@@ -4,7 +4,6 @@ const fetch = require('node-fetch');
 
 //console.log(module)
 
-
 // Función para validar si un archivo o directorio existe
 const pathExists = (filePath) => fs.existsSync(filePath);
 
@@ -48,20 +47,24 @@ const httpPeticion = (links) => {
     }
 
     return fetch(link.href)
-      .then((res) => ({
-        href: link.href,
-        text: link.text,
-        fileName: link.fileName,
-        status: res.status,
-        ok: res.ok ? 'OK' : 'FAIL',
-      }))
-      .catch(() => ({
-        href: link.href,
-        text: link.text,
-        fileName: link.fileName,
-        status: 404,
-        ok: 'FAIL',
-      }));
+      .then((res) => {
+        return {
+          href: link.href,
+          text: link.text,
+          fileName: link.fileName,
+          status: res.status,
+          ok: res.ok ? 'OK' : 'FAIL',
+        };
+      })
+      .catch(() => {
+        return {
+          href: link.href,
+          text: link.text,
+          fileName: link.fileName,
+          status: 404,
+          ok: 'FAIL',
+        };
+      });
   });
 
   return Promise.all(promises);
@@ -74,11 +77,3 @@ module.exports = {
   getLinks,
   httpPeticion
 };
-
-
-// $ ls -d *  --> Los nombres de los elementos que tienen "@" al final son enlaces simbólicos,
-//mientras que los que tienen "/" al final son directorios. ($ ls -d */)
-
-// expresión ternaria  ---->  condición ? valor_si_verdadero : valor_si_falso;
-
-

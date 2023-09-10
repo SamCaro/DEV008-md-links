@@ -1,7 +1,5 @@
 // script de línea de comandos (CLI) en JavaScript que utiliza Node.js.
-
 const { mdLinks } = require('./mdlinks.js');
-const { httpPeticion } = require('./node-methods.js');
 const { statsLinks } = require('./stats.js');
 
 const args = process.argv.slice(2);
@@ -15,10 +13,8 @@ const cli = () => {
     console.log('Opciones:');
     console.log('--validate  Comprueba el estado de los enlaces.');
     console.log('--stats     Muestra estadísticas de los enlaces.');
-    console.log('Ejemplo: md-links README.md --validate --stats');
-    process.exit(0);
-  }
-
+    console.log('Ejemplo: cli  README.md --validate --stats');
+  } else { 
   mdLinks(path, { validate, stats })
     .then((links) => {
       if (validate) {
@@ -34,6 +30,7 @@ const cli = () => {
     .catch((err) => {
       console.log(err);
     });
+  }
 };
 
 cli();

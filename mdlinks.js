@@ -1,12 +1,11 @@
-const fs = require('fs'); 
+const fs = require('fs');
 const {
   pathExists,
   extensionOfPath,
   transformToAbsolute,
   httpPeticion,
   getLinks
-} = require('./node-methods'); 
-
+} = require('./node-methods');
 
 const mdLinks = (filePath) => {
   const absolutePath = transformToAbsolute(filePath);
@@ -17,20 +16,24 @@ const mdLinks = (filePath) => {
       return;
     }
 
-    fs.promises.readFile(absolutePath, 'utf8')
-      .then((content) => {
-        const links = getLinks(content, absolutePath);
-        if (links.length === 0) {
-          resolve([]);
-        } else {
-          resolve(httpPeticion(links));
-        }
-      })
-      .catch((err) => {
+    fs.readFile(absolutePath, 'utf8', (err, data) => {
+      if (err) {
         reject(err);
-      });
+        return;
+      } else {
+      const links = getLinks(data, absolutePath);
+      if (links.length === 0) {
+        resolve([]);
+        return;
+      } else {
+        resolve(httpPeticion(links))
+      }
+    }
+    });
   });
 };
+
+
 
 
 

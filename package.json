@@ -1,6 +1,6 @@
 {
   "name": "md-links-samcaro",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "engines": {
     "node": ">=16.x"
   },
@@ -35,7 +35,7 @@
     "homepage": "https://github.com/SamCaro/DEV008-md-links#readme"
   },
   "bin": {
-    "mdlinks": "cli.js"
+    "cli": "cli.js"
   }
   
 }
