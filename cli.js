@@ -1,6 +1,6 @@
 // script de línea de comandos (CLI) en JavaScript que utiliza Node.js.
-const { mdLinks } = require('./mdlinks.js');
-const { statsLinks } = require('./stats.js');
+const { mdLinks } = require('./src/mdlinks');
+const { statsLinks } = require('./src/stats.js');
 
 const args = process.argv.slice(2);
 const path = args[0];

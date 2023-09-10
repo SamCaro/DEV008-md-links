@@ -20,19 +20,24 @@ const mdLinks = (filePath) => {
       if (err) {
         reject(err);
         return;
-      } else {
+      }
+
       const links = getLinks(data, absolutePath);
       if (links.length === 0) {
         resolve([]);
         return;
-      } else {
-        resolve(httpPeticion(links))
       }
-    }
+  
+      httpPeticion(links)
+        .then((result) => {
+          resolve(result); 
+        })
+        .catch((err) => {
+          reject(err); 
+        });
     });
   });
 };
-
 
 
 

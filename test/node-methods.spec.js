@@ -4,7 +4,7 @@ const {
     transformToAbsolute,
     getLinks,
     httpPeticion
-} = require('../node-methods');
+} = require('../src/node-methods');
 
 const path = 'C:\\Users\\USUARIO\\DEV008\\DEV008-md-links\\README.md';
 const pathVacio = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas\prueba-path-valid.md'

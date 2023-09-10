@@ -1,4 +1,4 @@
-const { statsLinks } = require('../stats');
+const { statsLinks } = require('../src/stats');
 
 const links = [
     { href: 'http://sc.com', status: 400 },

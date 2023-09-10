@@ -1,4 +1,4 @@
-const { mdLinks } = require('../mdlinks');
+const { mdLinks } = require('../src/mdlinks');
 
 const pathError = '/usuario/DEV008/DEV008-md-links/noexiste'
 const path = 'C:\Users\USUARIO\DEV008\DEV008-md-links\test\test-pruebas'
